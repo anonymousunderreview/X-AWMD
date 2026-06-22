@@ -1,10 +1,5 @@
 # X-AWMD: A Generalizable Framework for Black-Box Audio Watermark Detection under Method and Domain Shift
 
-This repository contains the official implementation of the paper:
-
-> **X-AWMD: A Generalizable Framework for Black-Box Audio Watermark Detection under Method and Domain Shift**
-> Submitted to IEEE SLT 2024 (under review)
-
 ---
 
 ## Overview
@@ -34,6 +29,17 @@ X-AWMD detects whether an audio clip has been watermarked, without access to the
     └── xlsr_aug.py           # Augmentation strategy ablation
 ```
 
+---
+## Requirements
+
+```
+torch>=2.0.0
+torchaudio>=2.0.0
+transformers>=4.36.0
+librosa>=0.10.0
+scikit-learn>=1.3.0
+numpy>=1.24.0
+```
 ---
 
 ## Installation
@@ -157,17 +163,4 @@ python ablation/xlsr_aug.py --manifest dataset_manifest.csv --aug_mode specaug
 python ablation/xlsr_aug.py --manifest dataset_manifest.csv --aug_mode mixup
 python ablation/xlsr_aug.py --manifest dataset_manifest.csv --aug_mode codec_clean
 python ablation/xlsr_aug.py --manifest dataset_manifest.csv --aug_mode combined
-```
-
----
-
-## Requirements
-
-```
-torch>=2.0.0
-torchaudio>=2.0.0
-transformers>=4.36.0
-librosa>=0.10.0
-scikit-learn>=1.3.0
-numpy>=1.24.0
 ```
