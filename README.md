@@ -28,18 +28,6 @@ X-AWMD detects whether an audio clip has been watermarked, without access to the
     ├── xlsr_conv_transformer.py # XLS-R + Transformer head
     └── xlsr_aug.py           # Augmentation strategy ablation
 ```
-
----
-## Requirements
-
-```
-torch>=2.0.0
-torchaudio>=2.0.0
-transformers>=4.36.0
-librosa>=0.10.0
-scikit-learn>=1.3.0
-numpy>=1.24.0
-```
 ---
 
 ## Installation
