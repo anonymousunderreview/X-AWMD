@@ -14,7 +14,7 @@ Usage:
     python baselines/wmd.py --manifest /path/to/dataset_manifest.csv
     python baselines/wmd.py --manifest /path/to/dataset_manifest.csv --eval_only --ckpt_path ./checkpoints/wmd.pth
 """
-import os, csv, json, time, math, argparse, random
+import os, sys, csv, json, time, math, argparse, random
 from typing import List, Tuple
 
 import numpy as np
@@ -230,7 +230,8 @@ def run_eval(model, cfg, log):
     val_rows = load_rows(cfg["val_split"])
     eval_rows = [r for r in val_rows if r["perturbation"] in BLACKBOX_PERTURBATIONS]
     if not eval_rows:
-        raise RuntimeError(f"No black-box rows in split={cfg['val_split']}")
+        log(f"[eval] No black-box rows in split={cfg['val_split']}, skipping built-in eval.")
+        return
 
     eval_items = [(r["path"], r["label"]) for r in eval_rows]
     eval_ds = DetectionSubset(eval_items, cfg, list(range(len(eval_items))))
@@ -281,6 +282,7 @@ def main():
     ap.add_argument("--log_file",         type=str,   default=None)
     ap.add_argument("--eval_only",        action="store_true")
     ap.add_argument("--ckpt_path",        type=str,   default=None)
+    ap.add_argument("--seed",             type=int,   default=42)
     args = ap.parse_args()
 
     cfg = CFG.copy()
@@ -379,6 +381,13 @@ def main():
 
 
 if __name__ == "__main__":
-    random.seed(42); np.random.seed(42); torch.manual_seed(42)
-    if torch.cuda.is_available(): torch.cuda.manual_seed_all(42)
+    _seed = 42
+    for _i, _a in enumerate(sys.argv):
+        if _a == "--seed" and _i + 1 < len(sys.argv):
+            try: _seed = int(sys.argv[_i + 1])
+            except ValueError: pass
+    random.seed(_seed); np.random.seed(_seed); torch.manual_seed(_seed)
+    if torch.cuda.is_available(): torch.cuda.manual_seed_all(_seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark     = False
     main()

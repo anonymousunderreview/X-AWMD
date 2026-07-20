@@ -214,6 +214,7 @@ def main():
     ap.add_argument("--save_meta",   type=str,   default=None)
     ap.add_argument("--device",      type=str,   default=None)
     ap.add_argument("--skip_base",   action="store_true", help="Skip CNN training, load existing save_base")
+    ap.add_argument("--seed",        type=int,   default=42)
     args = ap.parse_args()
 
     cfg = CFG.copy()
@@ -228,6 +229,14 @@ def main():
 
     if cfg["manifest"] is None:
         ap.error("--manifest is required (or set 'manifest' in a --config JSON file)")
+
+    seed = int(args.seed)
+    random.seed(seed); np.random.seed(seed); torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark     = False
+    print(f"Seed: {seed}", flush=True)
 
     if not args.skip_base or not os.path.isfile(cfg["save_base"]):
         train_base(cfg)
