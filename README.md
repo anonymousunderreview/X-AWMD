@@ -6,6 +6,8 @@ Official implementation of:
 
 X-AWMD detects whether an audio clip contains an audio watermark in a black-box setting. The detector does not use the embedding algorithm, secret key, watermark decoder, or reference clean audio at inference time. The paper evaluates generalization to unseen watermarking methods and out-of-domain speech.
 
+Our key empirical finding is that simple signal-level STFT magnitude and differential-phase features are more robust for black-box audio watermark detection than several heavier speech representation backbones, including XLS-R, WavLM, and Whisper-style architectures. In this problem, watermark evidence is often better captured by low-level spectral and phase perturbations than by semantic speech embeddings.
+
 ## Method
 
 The proposed model uses signal-level STFT features rather than a frozen speech representation backbone:
@@ -121,35 +123,6 @@ python run_multiseed.py \
   --out_dir experiments/multiseed_xawmd \
   --seeds 42 2024
 ```
-
-## Paper Results
-
-Main black-box OOD comparison. Threshold-dependent F1 uses a single validation-calibrated threshold.
-
-| Method | Val AUROC | Val F1 | Test1 AUROC | Test1 F1 | Test2 AUROC | Test2 F1 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| WMD | 0.7201 | 0.58 | 0.5709 | 0.37 | 0.5794 | 0.49 |
-| AudioWMD | 0.8830 | 0.82 | 0.6382 | 0.16 | 0.6317 | 0.43 |
-| X-AWMD | 0.9154 | 0.86 | 0.9108 | 0.45 | 0.8776 | 0.48 |
-
-Method-shift isolation for X-AWMD:
-
-| Split | Overall AUROC | EchoHiding AUROC | Patchwork AUROC | WavMark AUROC | Recall-W | F1-W |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Validation | 0.9154 | - | - | - | 0.80 | 0.8628 |
-| Test0 | 0.7977 | 0.9575 | 0.5433 | 0.8923 | 0.48 | 0.6241 |
-| Test1 | 0.9108 | 0.8588 | 0.9327 | 0.9409 | 0.29 | 0.4454 |
-| Test2 | 0.8776 | 0.9446 | 0.7326 | 0.9558 | 0.32 | 0.4835 |
-
-Design ablation:
-
-| Setting | Val AUROC | Test0 AUROC | Test1 AUROC | Test2 AUROC |
-| --- | ---: | ---: | ---: | ---: |
-| XLS-R + BCE | 0.8929 | 0.6653 | 0.7477 | 0.5872 |
-| STFT + phase + BCE | 0.9161 | 0.7553 | 0.8610 | 0.7913 |
-| STFT + phase + pair ranking | 0.9154 | 0.7977 | 0.9108 | 0.8776 |
-| + method-centroid invariance | 0.9145 | 0.8042 | 0.8954 | 0.8498 |
-| + GroupDRO | 0.8991 | 0.6956 | 0.8866 | 0.7137 |
 
 ## Baselines
 
